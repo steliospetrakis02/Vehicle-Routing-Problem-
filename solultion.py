@@ -37,7 +37,7 @@ class Nodes:
         self.y = ycoord
         self.id = id
         self.demand = demand
-        unload_time = unload_time     
+        unload_time = 10     
         
 m = Model()
 m.BuildModel()
