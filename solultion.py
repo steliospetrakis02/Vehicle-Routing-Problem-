@@ -32,12 +32,12 @@ class Model:
 
 #ID,XCOORD,YCOORD,DEMAND,UNLOADING_TIME
 class Nodes:
-    def __init__(self,id,xcoord,ycoord,demand,unload_time):
+    def __init__(self,ID,xcoord,ycoord,demand,unload_time):
         self.x = xcoord
         self.y = ycoord
-        self.id = id
+        self.ID = ID
         self.demand = demand
-        unload_time = 10     
+        self.unload_time = unload_time     
         
 m = Model()
 m.BuildModel()
