@@ -1,5 +1,5 @@
 from SolutionDrawer import *
-from solultion import Model
+from vrp.VRP_Model import Model
 
 class Solution:
     def __init__(self):
@@ -75,15 +75,15 @@ def ReportSolution(sol):
         print(sol.sequenceOfNodes[i].ID, end = ' ')
 
 
-def CheckSolution(sol, distanceMatrix):
-    cst = 0
-    print (sol.cost)
-    for i in range(len(sol.sequenceOfNodes) - 1):
-        a = sol.sequenceOfNodes[i]
-        b = sol.sequenceOfNodes[i+1]
-        cst += distanceMatrix[a.ID][b.ID]
-    if (abs(cst - sol.cost) > 0.00001):
-        print('Error')
+ #def CheckSolution(sol, distanceMatrix):
+ #   cst = 0
+ #   print (sol.cost)
+ #   for i in range(len(sol.sequenceOfNodes) - 1):
+ #       a = sol.sequenceOfNodes[i]
+ #       b = sol.sequenceOfNodes[i+1]
+ #       cst += distanceMatrix[a.ID][b.ID]
+ #   if (abs(cst - sol.cost) > 0.00001):
+ #       print('Error')
 
 
 def solve(m):
@@ -97,7 +97,7 @@ def solve(m):
     SetRoutedFlagToFalseForAllCustomers(customers)
     #ApplyNearestNeighborMethod(depot, customers, sol, distanceMatrix)
     MinimumInsertions(depot, customers, sol, distanceMatrix)
-    CheckSolution(sol, distanceMatrix)
+    #CheckSolution(sol, distanceMatrix)
     ReportSolution(sol)
     SolDrawer.draw(0, sol, allNodes)
 
