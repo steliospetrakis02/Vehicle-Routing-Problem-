@@ -98,6 +98,8 @@ def test_solution(file_name, all_nodes, vehicles, capacity):
         no_commas = ln.split(sep=separator)
         ids = [int(no_commas[i]) for i in range(len(no_commas))]
         nodes_sequence = [all_nodes[idd] for idd in ids]
+        print("Eeeeeeeeeeeeee")
+        print(type(nodes_sequence))
         rt_cumulative_time, rt_load = calculate_route_details(nodes_sequence)
         if rt_load > capacity:
             print('Capacity violation. Route', i, 'total load is', rt_load)
@@ -110,5 +112,5 @@ def test_solution(file_name, all_nodes, vehicles, capacity):
     print('Solution is ΟΚ. Total Cost:', cost_calculated)
 
 
-all_nodes, vehicles, capacity = load_model('Instance.txt')
-test_solution('example_solution.txt', all_nodes, vehicles, capacity)
+all_nodes, vehicles, capacity = load_model('data.txt')
+test_solution('first_test.txt', all_nodes, vehicles, capacity)

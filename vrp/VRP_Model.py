@@ -13,16 +13,22 @@ class Model:
 
 
     def BuildModel(self):
-      
         f = open("data2.txt", "r")
         reader=csv.reader(f)
+        dem2=[]
+        
         for row in reader:
            cust = (Node(int(row[0]),int(row[1]),int(row[2]),int(row[3]),int(row[4])))
+           dem2.append(int(row[3]))
+
            self.allNodes.append(cust)
            self.customers.append(cust)
-
+        
         rows = len(self.allNodes)
         self.matrix = [[0.0 for x in range(rows)] for y in range(rows)]
+        self.capacity = 200
+
+        totalCustomers = 100
 
         for i in range(0, len(self.allNodes)):
             
@@ -41,12 +47,11 @@ class Node:
         self.demand = dem
         self.unload_time = unload_time
         self.isRouted = False
-   
+
 
 class Route:
     def __init__(self, dp, cap):
         self.sequenceOfNodes = []
-        self.sequenceOfNodes.append(dp)
         self.sequenceOfNodes.append(dp)
         self.cost = 0
         self.capacity = cap

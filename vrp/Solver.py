@@ -6,13 +6,7 @@ class Solution:
     def __init__(self):
         self.cost = 0.0
         self.routes = []
-
-class Saving:
-    def __init__(self, n1, n2, sav):
-        self.n1 = n1
-        self.n2 = n2
-        self.score = sav
-
+     
 
 class Solver:
     def __init__(self, m):
@@ -26,9 +20,12 @@ class Solver:
 
     def solve(self):
         self.SetRoutedFlagToFalseForAllCustomers()
-        self.Clarke_n_Wright()
+        self.sol=self.start_all_routes()
+        self.Solve(self.sol)
+      
         self.ReportSolution(self.sol)
         return self.sol
+   
 
     def SetRoutedFlagToFalseForAllCustomers(self):
         for i in range(0, len(self.customers)):
@@ -38,18 +35,91 @@ class Solver:
             c.isRouted = False
 
     def ReportSolution(self, sol):
+      
         for i in range(0, len(sol.routes)):
             rt = sol.routes[i]
+            print(rt.sequenceOfNodes[0].ID, end=',')
             for j in range (0, len(rt.sequenceOfNodes)):
-                print(rt.sequenceOfNodes[j].ID, end=' ')
-            print(rt.cost)
+                
+                if(rt.sequenceOfNodes[j].ID==0):
+                    continue
+                if(rt.sequenceOfNodes[j].ID==100):
+                    continue
+                print(rt.sequenceOfNodes[j].ID, end=',')   
+
+                
+            print(" ")
+            
         SolDrawer.draw('MinIns', self.sol, self.allNodes)
         print(self.sol.cost)
+    
+    
+    def ApplyNearestNeighborMethod(self,sol,route_number):
+        
+        indexOfTheNextCustomer = -1
+        minimumInsertionCost = 1000000
+        rt=sol.routes[route_number]
+        lastNodeInTheCurrentSequence = rt.sequenceOfNodes[-1]
+        
+        for j in range (0, len(self.customers)):
+            candidate = self.customers[j]
+            if candidate.isRouted == True:
+                continue
+            
+            trialCost = self.distanceMatrix[lastNodeInTheCurrentSequence.ID][candidate.ID]
+            if(trialCost==0):
+                continue
+            
+            if (trialCost < minimumInsertionCost):
+                indexOfTheNextCustomer = j
+                minimumInsertionCost = trialCost
+        
+        insertedCustomer = self.customers[indexOfTheNextCustomer]
+        rt.sequenceOfNodes.append(insertedCustomer)
+        
+        insertedCustomer.isRouted = True
+        return sol
 
+    def start_all_routes(self):
+        s = Solution()
+        for i in range(14):
+            rt = Route(self.depot, self.capacity)
+            s.routes.append(rt)
 
+        return s
+    
+    def distance(from_node, to_node):
+        dx = from_node.x - to_node.x
+        dy = from_node.y - to_node.y
+        dist = math.sqrt(dx ** 2 + dy ** 2)
+        return dist
+  
+    
+    def calc_objective(self,nodes_sequence):
+        
+      rt_cumulative_cost = 0
+      tot_time = 0
+      for i in range(len(nodes_sequence) - 1):
+          from_node = nodes_sequence[i]
+          to_node = nodes_sequence[i+1]
+          tot_time += self.distance(from_node, to_node)
+          rt_cumulative_cost += tot_time
+          tot_time += to_node.serv_tim
+          
+      return rt_cumulative_cost
+    
+    def Solve(self,sol):
+        max_obj=100000000
+        for i in range(len(self.customers)):
+            
+            for j in range(14):
+                #s=self.calc_objective()
+                self.ApplyNearestNeighborMethod(sol,j)
+
+        
     def CalculateTotalCost(self, sol):
         c = 0
-        for i in range(0, len(sol.routes)):
+        for i in range(0, len(sol.sol)):
             rt = sol.routes[i]
             for j in range(0, len(rt.sequenceOfNodes) - 1):
                 a = rt.sequenceOfNodes[j]
@@ -57,119 +127,9 @@ class Solver:
                 c += self.distanceMatrix[a.ID][b.ID]
         return c
 
-    def UpdateRouteCostAndLoad(self, rt: Route):
-        tc = 0
-        tl = 0
-        for i in range(0, len(rt.sequenceOfNodes) - 1):
-            A = rt.sequenceOfNodes[i]
-            B = rt.sequenceOfNodes[i+1]
-            tc += self.distanceMatrix[A.ID][B.ID]
-            tl += A.demand
-        rt.load = tl
-        rt.cost = tc
-
-    def Clarke_n_Wright(self):
-        self.sol = self.create_initial_routes()
-        savings: list = self.calculate_savings()
-        savings.sort(key=lambda s: s.score, reverse=True)
-        for i in range(0, len(savings)):
-            sav = savings[i]
-            n1 = sav.n1
-            n2 = sav.n2
-            rt1 = n1.route
-            rt2 = n2.route
-
-            if n1.route == n2.route:
-                continue
-            if self.not_first_or_last(rt1, n1) or self.not_first_or_last(rt2, n2):
-                continue
-            if rt1.load + rt2.load > self.capacity:
-                continue
-                
-            self.merge_routes(n1, n2)
-
-            self.sol.cost -= sav.score
-            cst = self.CalculateTotalCost(self.sol)
-
-            print(cst, self.sol.cost)
-            a = 0
-        a = 0
 
 
-    def calculate_savings(self):
-        savings = []
-        for i in range(0, len(self.customers)):
-            n1 = self.customers[i]
-            for j in range(i + 1, len(self.customers)):
-                n2 = self.customers[j]
-
-                score = self.distanceMatrix[n1.ID][self.depot.ID] + self.distanceMatrix[self.depot.ID][n2.ID]
-                score -= self.distanceMatrix[n1.ID][n2.ID]
-
-                sav = Saving(n1, n2, score)
-                savings.append(sav)
-
-        return savings
-
-    def create_initial_routes(self):
-        s = Solution()
-        for i in range(0, len(self.customers)):
-            n = self.customers[i]
-            rt = Route(self.depot, self.capacity)
-            n.route = rt
-            n.position_in_route = 1
-            rt.sequenceOfNodes.insert(1, n)
-            rt.load = n.demand
-            rt.cost = self.distanceMatrix[self.depot.ID][n.ID] + self.distanceMatrix[n.ID][self.depot.ID]
-            s.routes.append(rt)
-            s.cost += rt.cost
-        return s
-
-    def not_first_or_last(self, rt, n):
-        if n.position_in_route != 1 and n.position_in_route != len(rt.sequenceOfNodes) - 2:
-            return True
-        return False
-
-    def merge_routes(self, n1, n2):
-        rt1 = n1.route
-        rt2 = n2.route
-
-        if n1.position_in_route == 1 and n2.position_in_route == len(rt2.sequenceOfNodes) - 2:
-            # for i in range(len(rt2.sequenceOfNodes) - 2, 0, -1):
-            #     n = rt2.sequenceOfNodes[i]
-            #     rt1.sequenceOfNodes.insert(1, n)
-            rt1.sequenceOfNodes[1:1] = rt2.sequenceOfNodes[1:len(rt2.sequenceOfNodes) - 1]
-        elif n1.position_in_route == 1 and n2.position_in_route == 1:
-            # for i in range(1, len(rt2.sequenceOfNodes) - 1, 1):
-            #     n = rt2.sequenceOfNodes[i]
-            #     rt1.sequenceOfNodes.insert(1, n)
-            rt1.sequenceOfNodes[1:1] = rt2.sequenceOfNodes[len(rt2.sequenceOfNodes) - 2:0:-1]
-        elif n1.position_in_route == len(rt1.sequenceOfNodes) - 2 and n2.position_in_route == 1:
-            # for i in range(1, len(rt2.sequenceOfNodes) - 1, 1):
-            #     n = rt2.sequenceOfNodes[i]
-            #     rt1.sequenceOfNodes.insert(len(rt1.sequenceOfNodes) - 1, n)
-            rt1.sequenceOfNodes[len(rt1.sequenceOfNodes) - 1:len(rt1.sequenceOfNodes) - 1] = rt2.sequenceOfNodes[1:len(rt2.sequenceOfNodes) - 1]
-        elif n1.position_in_route == len(rt1.sequenceOfNodes) - 2 and n2.position_in_route == len(rt2.sequenceOfNodes) - 2:
-            # for i in range(len(rt2.sequenceOfNodes) - 2, 0, -1):
-            #     n = rt2.sequenceOfNodes[i]
-            #     rt1.sequenceOfNodes.insert(len(rt1.sequenceOfNodes) - 1, n)
-            rt1.sequenceOfNodes[len(rt1.sequenceOfNodes) - 1:len(rt1.sequenceOfNodes) - 1] = rt2.sequenceOfNodes[len(rt2.sequenceOfNodes) - 2:0:-1]
-        rt1.load += rt2.load
-        self.sol.routes.remove(rt2)
-        self.update_route_customers(rt1)
-
-    def update_route_customers(self, rt):
-        for i in range(1, len(rt.sequenceOfNodes) - 1):
-            n = rt.sequenceOfNodes[i]
-            n.route = rt
-            n.position_in_route = i
-
-
-
-
-
-
-
-
-
-
+m = Model()
+m.BuildModel()
+s = Solver(m)
+sol = s.solve()
