@@ -50,8 +50,8 @@ class Solver:
                 
             print(" ")
             
-        SolDrawer.draw('MinIns', self.sol, self.allNodes)
-        print(self.sol.cost)
+        SolDrawer.draw('Greedy', self.sol, self.allNodes)
+      
     
     
     def ApplyNearestNeighborMethod(self,sol,route_number):
