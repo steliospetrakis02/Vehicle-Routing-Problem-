@@ -47,7 +47,7 @@ class Solver:
 
         for i in range(0, len(sol.routes)):
             rt = sol.routes[i]
-           # print(rt.sequenceOfNodes[0].ID, end=',')
+            print(rt.sequenceOfNodes[0].ID, end=',')
             f.write(str(rt.sequenceOfNodes[0].ID))
             f.write(",")
             for j in range (0, len(rt.sequenceOfNodes)):
@@ -140,12 +140,14 @@ class Solver:
     
     def CalculateTotalCost(self, sol):
         total_cost = 0
+        i=0
         for i in range(len(sol.routes)):
             rt = sol.routes[i]
             tot_time = 0       
             rt_cumulative_cost = 0
-            for j in range(0,len(rt.sequenceOfNodes) - 1):
-                         
+            for j in range(len(rt.sequenceOfNodes) - 1):
+               
+                
                 from_node = rt.sequenceOfNodes[j]            
                 to_node = rt.sequenceOfNodes[j + 1]            
                 tot_time += self.distanceMatrix[from_node.ID][to_node.ID]            
@@ -161,7 +163,7 @@ class Solver:
         
         for i in range(len(self.customers)):
             max_obj=100000000
-            for j in range(14):
+            for j in range(len(self.sol.routes)):
                
                 s=self.find_best_route(sol,j)
              
