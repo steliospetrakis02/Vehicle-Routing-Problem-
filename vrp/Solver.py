@@ -130,7 +130,8 @@ class Solver:
 
     def start_all_routes(self):
         s = Solution()
-        for i in range(14):
+        number_of_trucks=14
+        for i in range(number_of_trucks):
             rt = Route(self.depot, self.capacity)
             s.routes.append(rt)
             s.test_routes.append(rt)
@@ -146,14 +147,14 @@ class Solver:
             tot_time = 0       
             rt_cumulative_cost = 0
             for j in range(len(rt.sequenceOfNodes) - 1):
-               
-                
+                if(rt.sequenceOfNodes[j].ID==0 and j==2):
+                    
+                    continue
                 from_node = rt.sequenceOfNodes[j]            
                 to_node = rt.sequenceOfNodes[j + 1]            
                 tot_time += self.distanceMatrix[from_node.ID][to_node.ID]            
                 rt_cumulative_cost += tot_time            
                 tot_time += to_node.unload_time
-                       
             total_cost += rt_cumulative_cost    
         return total_cost
     
@@ -174,7 +175,17 @@ class Solver:
             self.ApplyNearestNeighborMethod(sol,index)
         
         sol.cost = self.CalculateTotalCost(sol)
-  
+        #MUST BE 6329.707229233027
+        print("Cost: ",sol.cost)
+        
+      #  rt=sol.routes[0]
+      #  print((rt.sequenceOfNodes[2].ID))
+      #  print(len(sol.routes))
+     #  k=0
+     #   for i in range(len(sol.routes)):
+     #       rt=sol.routes[i]
+    ##        k=k+(len(rt.sequenceOfNodes))
+   #     print(k)
 
 
 m = Model()

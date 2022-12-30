@@ -13,11 +13,12 @@ class Model:
 
 
     def BuildModel(self):
-        f = open("data2.txt", "r")
-        reader=csv.reader(f)
+       
+        f = open("Instance.txt", "r")
+        reader = list(csv.reader(f))
         dem2=[]
         
-        for row in reader:
+        for row in reader[5:106]:
            cust = (Node(int(row[0]),int(row[1]),int(row[2]),int(row[3]),int(row[4])))
            dem2.append(int(row[3]))
 
