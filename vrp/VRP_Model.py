@@ -16,12 +16,10 @@ class Model:
        
         f = open("Instance.txt", "r")
         reader = list(csv.reader(f))
-        dem2=[]
+        
         
         for row in reader[5:106]:
            cust = (Node(int(row[0]),int(row[1]),int(row[2]),int(row[3]),int(row[4])))
-           dem2.append(int(row[3]))
-
            self.allNodes.append(cust)
            self.customers.append(cust)
         
