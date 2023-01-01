@@ -27,7 +27,7 @@ class Model:
         self.matrix = [[0.0 for x in range(rows)] for y in range(rows)]
         self.capacity = 200
 
-        totalCustomers = 100
+      
 
         for i in range(0, len(self.allNodes)):
             

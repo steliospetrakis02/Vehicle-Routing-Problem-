@@ -56,8 +56,7 @@ class Solver:
                     print(rt.sequenceOfNodes[j].ID)
                     f.write(str(rt.sequenceOfNodes[j].ID))  
                     break
-                if(rt.sequenceOfNodes[j].ID==0 and j==2):
-                    continue
+                
                 print(rt.sequenceOfNodes[j].ID , end=",")
                 f.write(str(rt.sequenceOfNodes[j].ID))
                 f.write(",")
@@ -148,10 +147,11 @@ class Solver:
                     index = j
 
             self.ApplyNearestNeighborMethod(sol, index)
-
+        rt=sol.routes[0]
+        rt.sequenceOfNodes.pop(2)
         sol.cost = self.CalculateTotalCost(sol)
         print("Cost: ", sol.cost)
-
+        
 
     def CalculateTotalCost(self, sol):
         total_cost = 0
@@ -167,7 +167,7 @@ class Solver:
                 rt_cumulative_cost += tot_time
                 tot_time += to_node.unload_time
             total_cost += rt_cumulative_cost
-        return total_cost-34.392
+        return total_cost
 
 m = Model()
 m.BuildModel()
