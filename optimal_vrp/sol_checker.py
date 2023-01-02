@@ -61,7 +61,7 @@ def distance(from_node, to_node):
     dy = from_node.y - to_node.y
     dist = math.sqrt(dx ** 2 + dy ** 2)
     return dist
-
+    
 
 def calculate_route_details(nodes_sequence):
     rt_load = 0
@@ -126,5 +126,5 @@ def test_solution(file_name, all_nodes, vehicles, capacity):
     # everything is ok
     print('Solution is ΟΚ. Total Cost:', cost_calculated)
 
-all_nodes, vehicles, capacity = load_model('data.txt')
+all_nodes, vehicles, capacity = load_model('Instance.txt')
 test_solution('res.txt', all_nodes, vehicles, capacity)
