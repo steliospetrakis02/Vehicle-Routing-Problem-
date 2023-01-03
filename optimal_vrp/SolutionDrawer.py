@@ -10,7 +10,7 @@ class SolDrawer:
         plt.clf()
         SolDrawer.drawPoints(nodes)
         SolDrawer.drawRoutes(sol)
-        plt.savefig(str(itr))
+        plt.savefig(str(itr)+'.png')
 
     @staticmethod
     def drawPoints(nodes:list):
@@ -24,7 +24,7 @@ class SolDrawer:
 
     @staticmethod
     def drawRoutes(sol):
-        cmap = SolDrawer.get_cmap(len(sol.routes) + 1)
+        cmap = SolDrawer.get_cmap(len(sol.routes))
         if sol is not None:
             for r in range(0, len(sol.routes)):
                 rt = sol.routes[r]
@@ -33,11 +33,3 @@ class SolDrawer:
                     c1 = rt.sequenceOfNodes[i + 1]
                     plt.plot([c0.x, c1.x], [c0.y, c1.y], c=cmap(r))
 
-    @staticmethod
-    def drawTrajectory(searchTrajectory):
-        plt.clf()
-        plt.plot(searchTrajectory, 'o-')
-        plt.title('Search Trajectory')
-        plt.xlabel('Iterations')
-        plt.ylabel('Objective Function')
-        plt.savefig(str("SearchTrajectory"))

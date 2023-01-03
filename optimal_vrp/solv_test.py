@@ -372,17 +372,7 @@ class Solver:
                     k = 0
                 else:
                     k += 1
-            elif k == 0:
-                self.FindBestTwoOptMove(top)
-                if top.positionOfFirstRoute is not None and top.moveCost < 0:
-                    self.ApplyTwoOptMove(top)
-                    if draw:
-                        SolDrawer.draw(VNDIterator, self.sol, self.allNodes)
-                    VNDIterator = VNDIterator + 1
-                    self.searchTrajectory.append(self.sol.cost)
-                    k = 0
-                else:
-                    k += 1
+            
             if (self.sol.cost < self.bestSolution.cost):
                 self.bestSolution = self.cloneSolution(self.sol)
 
@@ -519,7 +509,7 @@ class Solver:
 
         if originRt == targetRt:
             del originRt.sequenceOfNodes[rm.originNodePosition]
-            if (rm.originNodePosition < rm.targetNodePosition):
+            if (rm.originNodePosition > rm.targetNodePosition):
                 targetRt.sequenceOfNodes.insert(rm.targetNodePosition, B)
             else:
                 targetRt.sequenceOfNodes.insert(rm.targetNodePosition + 1, B)
