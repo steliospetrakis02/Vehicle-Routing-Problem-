@@ -377,7 +377,7 @@ class Solver:
                 self.bestSolution = self.cloneSolution(self.sol)
 
         SolDrawer.draw('final_vnd', self.bestSolution, self.allNodes)
-        SolDrawer.drawTrajectory(self.searchTrajectory)
+#        SolDrawer.drawTrajectory(self.searchTrajectory)
 
 
 
