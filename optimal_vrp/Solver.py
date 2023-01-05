@@ -326,55 +326,54 @@ class Solver:
             operator = random.randint(0,1)
             terminationCondition2=False
             localSearchIterator2 = 0
+            kmax = 1
+            rm = RelocationMove()
+            sm = SwapMove()
+            
+            k = 0
+            draw = False
             print("while")
-            while terminationCondition2 is False:
-                
+            while k <= kmax:
                 self.InitializeOperators(rm, sm)
-                if operator == 1:
+                if k == 1:
                     self.FindBestRelocationMove(rm)
                     if rm.originRoutePosition is not None and rm.moveCost < 0:
                         self.ApplyRelocationMove(rm)
                         if draw:
                             SolDrawer.draw(VNDIterator, self.sol, self.allNodes)
                         VNDIterator = VNDIterator + 1
-#                        self.searchTrajectory.append(self.sol.cost) 
-                        operator = 0
-           
+  #                      self.searchTrajectory.append(self.sol.cost)
+                        k = 0
                     else:
-                        operator += 1  
-                elif operator == 0:
+                        k += 1
+                elif k == 0:
                     self.FindBestSwapMove(sm)
                     if sm.positionOfFirstRoute is not None and sm.moveCost < 0:
                         self.ApplySwapMove(sm)
                         if draw:
                             SolDrawer.draw(VNDIterator, self.sol, self.allNodes)
                         VNDIterator = VNDIterator + 1
-                        operator = 0
-           
+ #                       self.searchTrajectory.append(self.sol.cost)
+                        k = 0
                     else:
-                        operator += 1 
-#                    self.searchTrajectory.append(self.sol.cost
+                        k += 1
 
-                obj=self.CalculateTotalCost(self.sol)
-                if (obj < obj2):
-                    obj2=obj
-                    self.sol.cost=obj2
+               # obj=self.CalculateTotalCost(self.sol)
+                if (self.sol.cost < self.bestSolution.cost):
                     self.bestSolution = self.cloneSolution(self.sol)
-                    self.ReportSolution(self.sol)
+                    self.ReportSolution(self.bestSolution)
+                    SolDrawer.draw("last", self.bestSolution, self.allNodes)  
 
-                localSearchIterator2 = localSearchIterator2 + 1
-                if localSearchIterator2 == 2:
-                    i=1
-                    terminationCondition2 = True
+
             
             obj=self.CalculateTotalCost(self.sol)
-            if (obj < obj2):
-                obj2=obj
-                self.sol.cost=obj2
-                self.bestSolution = self.cloneSolution(self.sol)
-                self.ReportSolution(self.sol)
+            if (self.sol.cost < self.bestSolution.cost):
+                    self.bestSolution = self.cloneSolution(self.sol)
+                    self.ReportSolution(self.bestSolution)
+                    SolDrawer.draw("last", self.bestSolution, self.allNodes)  
+
             localSearchIterator = localSearchIterator + 1
-            if localSearchIterator == 10:
+            if localSearchIterator == 100:
                 terminationCondition = True
         
         self.sol = self.bestSolution
