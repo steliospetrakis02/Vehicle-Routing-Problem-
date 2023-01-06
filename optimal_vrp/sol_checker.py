@@ -1,7 +1,7 @@
 import random
 import math
 
-class Node:
+class Node: 
     def __init__(self, idd, xx, yy, dem=0, st=0):
         self.x = xx
         self.y = yy

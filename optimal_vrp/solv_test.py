@@ -407,9 +407,9 @@ class Solver:
 
     def FindBestRelocationMove(self, rm):
         print("e")
-        for originRouteIndex in range(1, len(self.sol.routes)):
+        for originRouteIndex in range(0, len(self.sol.routes)):
             rt1:Route = self.sol.routes[originRouteIndex]
-            for targetRouteIndex in range (1, len(self.sol.routes)):
+            for targetRouteIndex in range (0, len(self.sol.routes)):
                 rt2:Route = self.sol.routes[targetRouteIndex]
                 for originNodeIndex in range (1, len(rt1.sequenceOfNodes) - 2):
                     for targetNodeIndex in range (0, len(rt2.sequenceOfNodes) - 2):
@@ -438,7 +438,7 @@ class Solver:
                         moveCost = costAdded - costRemoved
 
                         if (moveCost < rm.moveCost) and abs(moveCost) > 0.0001:
-
+                            print("rellocation")
                             self.StoreBestRelocationMove(originRouteIndex, targetRouteIndex, originNodeIndex, targetNodeIndex, moveCost, originRtCostChange, targetRtCostChange, rm)
 
         return rm.originRoutePosition
@@ -496,6 +496,7 @@ class Solver:
 
                             moveCost = costAdded1 + costAdded2 - (costRemoved1 + costRemoved2)
                         if moveCost < sm.moveCost and abs(moveCost) > 0.0001:
+                            print("swapppp")
                             self.StoreBestSwapMove(firstRouteIndex, secondRouteIndex, firstNodeIndex, secondNodeIndex, moveCost, costChangeFirstRoute, costChangeSecondRoute, sm)
 
     def ApplyRelocationMove(self, rm: RelocationMove):
@@ -764,7 +765,7 @@ class Solver:
                             bestInsertion.route = rt
                             bestInsertion.cost = trialCost
                             bestInsertion.insertionPosition = j
-
+#
     def ApplyCustomerInsertionAllPositions(self, insertion):
         insCustomer = insertion.customer
         rt = insertion.route
