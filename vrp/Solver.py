@@ -122,6 +122,7 @@ class Solver:
 
         possible_route = self.CalculateTotalCost(sol)
         rt.sequenceOfNodes.pop()
+        
      
         return possible_route
 
@@ -148,10 +149,17 @@ class Solver:
 
             self.ApplyNearestNeighborMethod(sol, index)
         rt=sol.routes[0]
-        rt.sequenceOfNodes.pop(2)
+       # rt.sequenceOfNodes.pop(2)
         sol.cost = self.CalculateTotalCost(sol)
         print("Cost: ", sol.cost)
+        print("Eeeeeeee")
+        z=0
+        for i in range(14):
+           k=sol.routes[i]
+           z= len(k.sequenceOfNodes)
+           z=z
         
+    #    print(t)
 
     def CalculateTotalCost(self, sol):
         total_cost = 0

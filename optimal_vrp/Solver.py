@@ -17,7 +17,6 @@ class RelocationMove(object):
         self.costChangeOriginRt = None
         self.costChangeTargetRt = None
         self.moveCost = None
-        self.moveCost_penalized = None
 
     def Initialize(self):
         self.originRoutePosition = None
@@ -27,7 +26,6 @@ class RelocationMove(object):
         self.costChangeOriginRt = None
         self.costChangeTargetRt = None
         self.moveCost = 10 ** 9
-        self.moveCost_penalized = 10 ** 9
 
 class SwapMove(object):
     def __init__(self):
@@ -38,7 +36,6 @@ class SwapMove(object):
         self.costChangeFirstRt = None
         self.costChangeSecondRt = None
         self.moveCost = None
-        self.moveCost_penalized = None
 
     def Initialize(self):
         self.positionOfFirstRoute = None
@@ -48,7 +45,6 @@ class SwapMove(object):
         self.costChangeFirstRt = None
         self.costChangeSecondRt = None
         self.moveCost = 10 ** 9
-        self.moveCost_penalized = 10 ** 9
 
 class TwoOptMove(object):
     def __init__(self):
@@ -57,15 +53,12 @@ class TwoOptMove(object):
         self.positionOfFirstNode = None
         self.positionOfSecondNode = None
         self.moveCost = None
-        self.moveCost_penalized = None
-
     def Initialize(self):
         self.positionOfFirstRoute = None
         self.positionOfSecondRoute = None
         self.positionOfFirstNode = None
         self.positionOfSecondNode = None
         self.moveCost = 10 ** 9
-        self.moveCost_penalized = 10 ** 9
 
 
 class CustomerInsertion(object):
@@ -99,26 +92,114 @@ class Solver:
 
     def solve(self):
         self.SetRoutedFlagToFalseForAllCustomers()
-        # self.ApplyNearestNeighborMethod()
-        #self.MinimumInsertions()
-        
         self.sol = self.start_all_routes()
         self.Solve(self.sol)
-        #self.exhange_last_route()
-    #    rt21=self.sol.routes[10]
-    #    se2=rt21.sequenceOfNodes.pop()
-        
-    #    rt18=self.sol.routes[3]
-    #    rt18.sequenceOfNodes.insert(8,se2)
-        
+       
         self.ReportSolution(self.sol)
        # self.LocalSearch()
-        self.VNS()
-        self.exhange_last_route()
-        self.ReportSolution(self.sol)
+       # self.VNS()
+      #  self.exhange_last_route()
+      #  self.ReportSolution(self.sol)
+      #  
+      ##  self.VNS()
+      ##  self.exhange_last_route()
+      ##  self.ReportSolution(self.sol)
+      ##  
+      #  self.VNS()
+      #  self.exhange_last_route()
+      #  self.ReportSolution(self.sol)
+      
+        random.seed(109)
+        obj2=self.CalculateTotalCost(self.sol)
+
+        for i in range(80):
+                
+                random_route=random.randint(0,13)
+                random_route2=random.randint(0,13)
+                rt1= self.sol.routes[random_route]
+                rt2= self.sol.routes[random_route2]
+                
+                min1=len(rt1.sequenceOfNodes)
+                min2=len(rt2.sequenceOfNodes)
+                min_=min(min1,min2)
+                random_customer_Indx=random.randint(1,(min_)-2)
+                random_customer2_Indx=random.randint(1,(min_)-2)   
+                random_customer=rt1.sequenceOfNodes[random_customer_Indx]
+                random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
+                B = random_customer
+
+                if rt1 != rt2:
+                    while(rt2.load + B.demand > rt2.capacity):
+                        random_route=random.randint(0,13)
+                        random_route2=random.randint(0,13)
+                        rt1= self.sol.routes[random_route]
+                        rt2= self.sol.routes[random_route2]
+                        min1=len(rt1.sequenceOfNodes)
+                        min2=len(rt2.sequenceOfNodes)
+                        min_=min(min1,min2)
+                        random_customer_Indx=random.randint(1,(min_)-2)
+                        random_customer2_Indx=random.randint(1,(min_)-2)   
+                        random_customer=rt1.sequenceOfNodes[random_customer_Indx]
+                        random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
+                        B = random_customer
+                    else:
+                        self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)
+                else:
+                    self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)      
+        
+#                self.ReportSolution(self.sol)
+                #self.VNS()
+                #self.exhange_last_route()
+                #self.VNS()
+                #self.exhange_last_route()
+                #self.VNS()
+                #self.exhange_last_route()
+                #self.VNS()
+                #for i in range(10):
+                rand=random.randint(0,1)
+                for i in range(4):
+                    self.VNS()
+                    #self.exhange_last_route()
+                    
+
+                obj=self.CalculateTotalCost(self.sol)
+                if (obj < obj2):
+                    obj2=obj
+                    self.sol.cost=obj
+                    self.bestSolution.cost=obj
+                    self.bestSolution = self.cloneSolution(self.sol)
+                    self.ReportSolution(self.sol)
+
+                #print("E")
+
+
+
+        #print("E")
+        #for i in range(10):
+        #    rand=random.randint(0,2)
+        #    if(rand==1):
+        #        self.LocalSearch(0)
+        #    elif(rand==1):
+        #        self.exhange_last_route()
+        #    else:
+        #        self.VNS()
+                
+        #self.LocalSearch(0)
+        #self.exhange_last_route()
+        #self.LocalSearch(0)
+        #self.exhange_last_route()
+#
+        #self.LocalSearch(0)
         #self.exhange_last_route()
         #self.VNS()
+        #self.exhange_last_route()
+#
+        #self.LocalSearch(0)
+#
         #self.ReportSolution(self.sol)
+#
+        #
+        
         return self.sol
     
     def exhange_last_route(self):
@@ -216,7 +297,7 @@ class Solver:
 
         insertedCustomer = self.customers[indexOfTheNextCustomer]
         
-        
+       
         rt.sequenceOfNodes.append(insertedCustomer)
 
         insertedCustomer.isRouted = True
@@ -276,57 +357,53 @@ class Solver:
         if model_is_feasible:
             self.TestSolution()
 
-    def LocalSearch(self):
-        random.seed(109)
+    
+            
+
+    def LocalSearch(self, operator):
         self.bestSolution = self.cloneSolution(self.sol)
         terminationCondition = False
         localSearchIterator = 0
 
         rm = RelocationMove()
         sm = SwapMove()
-       
+        top = TwoOptMove()
 
         while terminationCondition is False:
-            operator = random.randint(0,1)
-            self.InitializeOperators(rm, sm)
-            # SolDrawer.draw(localSearchIterator, self.sol, self.allNodes)
+
+            self.InitializeOperators(rm, sm, top)
+            #SolDrawer.draw(localSearchIterator, self.sol, self.allNodes)
+
             # Relocations
             if operator == 0:
                 self.FindBestRelocationMove(rm)
-                if rm.originRoutePosition is not None  :
-                    if rm.moveCost_penalized < 0 :
+                if rm.originRoutePosition is not None:
+                    if rm.moveCost < 0:
                         self.ApplyRelocationMove(rm)
-                       # self.ReportSolution(self.sol)
-                        # print(localSearchIterator, self.sol.cost, operator)
                     else:
-                        self.penalize_arcs()
-                        localSearchIterator = localSearchIterator - 1
+                        terminationCondition = True
             # Swaps
             elif operator == 1:
-              #  print('SWAPS')
                 self.FindBestSwapMove(sm)
-                if sm.positionOfFirstRoute is not None  :
-                    if sm.moveCost_penalized < 0 :
+                if sm.positionOfFirstRoute is not None:
+                    if sm.moveCost < 0:
                         self.ApplySwapMove(sm)
-                        # print(localSearchIterator, self.sol.cost, operator)
                     else:
-                        self.penalize_arcs()
-                        localSearchIterator = localSearchIterator - 1
-            
+                        terminationCondition = True
+            elif operator == 2:
+                self.FindBestTwoOptMove(top)
+                if top.positionOfFirstRoute is not None:
+                    if top.moveCost < 0:
+                        self.ApplyTwoOptMove(top)
+                    else:
+                        terminationCondition = True
 
-           # self.TestSolution()
-            cost=self.CalculateTotalCost(self.sol)
-            if (cost < self.bestSolution.cost):
-               
+
+            if (self.sol.cost < self.bestSolution.cost):
                 self.bestSolution = self.cloneSolution(self.sol)
-                print(localSearchIterator, self.bestSolution.cost)
 
-            localSearchIterator = localSearchIterator + 1
-            if localSearchIterator == 80:
-                terminationCondition = True
 
-        self.sol = self.bestSolution
-        SolDrawer.draw(self.bestSolution.cost, self.sol, self.allNodes)
+        self.sol = self.bestSolution      
         
     def create_random_cust(self):
         random.seed()
@@ -351,132 +428,45 @@ class Solver:
         draw=False
         rm = RelocationMove()
         sm = SwapMove()
+        top=TwoOptMove()
         i=0
         random.seed(109)
-
-        change_solve_iter=0
+        k=0
+        kmax=2
         while terminationCondition is False:
-         #   print(localSearchIterator)
-           # print("while")
-            draw = False
-            if(change_solve_iter==10):
-                change_solve_iter=0    
-                #we found a better solution 
-              #  print("we are in")
-                if(self.bestSolution.cost <= obj2):
-                    pass
-                 #   self.bestSolution = self.cloneSolution(self.sol)
-                    #self.sol.cost= self.bestSolution.cost
-                #    self.ReportSolution(self.bestSolution)
-                #we didnt
-                else:
-                    pass    
-                
-            if(i!=0):
-                rt23=self.sol.routes[1]
-          #      print(rt23.sequenceOfNodes[1].ID)
-          #      print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
-                random_route=random.randint(0,13)
-                random_route2=random.randint(0,13)
-                rt1= self.sol.routes[random_route]
-                rt2= self.sol.routes[random_route2]
-                
-                min1=len(rt1.sequenceOfNodes)
-                min2=len(rt2.sequenceOfNodes)
-                min_=min(min1,min2)
-                random_customer_Indx=random.randint(1,(min_)-2)
-                random_customer2_Indx=random.randint(1,(min_)-2)   
-                random_customer=rt1.sequenceOfNodes[random_customer_Indx]
-                random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
-                B = random_customer
-              #  print("iaaa")
+            operator=random.randint(0,2)
+            self.InitializeOperators(rm, sm, top)
+            #SolDrawer.draw(localSearchIterator, self.sol, self.allNodes)
 
-                if rt1 != rt2:
-                    while(rt2.load + B.demand > rt2.capacity):
-                        random_route=random.randint(0,13)
-                        random_route2=random.randint(0,13)
-                        rt1= self.sol.routes[random_route]
-                        rt2= self.sol.routes[random_route2]
-                        min1=len(rt1.sequenceOfNodes)
-                        min2=len(rt2.sequenceOfNodes)
-                        min_=min(min1,min2)
-                        random_customer_Indx=random.randint(1,(min_)-2)
-                        random_customer2_Indx=random.randint(1,(min_)-2)   
-                        #random_customer_Indx=random.randint(1,len(rt2.sequenceOfNodes)-1)
-                        #random_customer2_Indx=random.randint(1,len(rt1.sequenceOfNodes)-1)   
-                        random_customer=rt1.sequenceOfNodes[random_customer_Indx]
-                        random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
-                        B = random_customer
-          #              print("while")
-                    else:
-                        self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)
-                else:
-                    self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)
-
-                        
-            #self.ReportSolution(self.sol)
-            print("edw")
-            
-            kmax = 1
-            k = 0
-         #   print("while")
-            while k <= kmax:
-            #    print(VNDIterator)
-
-                self.InitializeOperators(rm, sm)
-                if k == 1:
-                    self.FindBestRelocationMove(rm)
-                    if rm.originRoutePosition is not None and rm.moveCost < 0:
+            # Relocations
+            if operator == 0:
+                self.FindBestRelocationMove(rm)
+                if rm.originRoutePosition is not None:
+                    if rm.moveCost < 0:
                         self.ApplyRelocationMove(rm)
-                        if draw:
-                            SolDrawer.draw(VNDIterator, self.sol, self.allNodes)
-                        VNDIterator = VNDIterator + 1
-  #                      self.searchTrajectory.append(self.sol.cost)
-                        k = 0
                     else:
-                        k += 1
-                elif k == 0:
-                    self.FindBestSwapMove(sm)
-                    if sm.positionOfFirstRoute is not None and sm.moveCost < 0:
+                        terminationCondition = True
+            # Swaps
+            elif operator == 1:
+                self.FindBestSwapMove(sm)
+                if sm.positionOfFirstRoute is not None:
+                    if sm.moveCost < 0:
                         self.ApplySwapMove(sm)
-                        if draw:
-                            SolDrawer.draw(VNDIterator, self.sol, self.allNodes)
-                        VNDIterator = VNDIterator + 1
- #                       self.searchTrajectory.append(self.sol.cost)
-                        k = 0
                     else:
-                        k += 1
+                        terminationCondition = True
+            elif operator == 2:
+                self.FindBestTwoOptMove(top)
+                if top.positionOfFirstRoute is not None:
+                    if top.moveCost < 0:
+                        self.ApplyTwoOptMove(top)
+                    else:
+                        terminationCondition = True
 
-                obj=self.CalculateTotalCost(self.sol)
-                if (obj <= obj2):
-                    obj2=obj
-                    self.sol.cost=obj
-                    self.bestSolution.cost=obj
-                    self.bestSolution = self.cloneSolution(self.sol)
 
-                #    self.sol.cost=obj
-                 #   obj2 = obj
-                  #  self.bestSolution = self.cloneSolution(self.sol)
-                   # self.ReportSolution(self.bestSolution)
-                  #  SolDrawer.draw("last", self.sol, self.allNodes)  
-         #   print("eimai edw")
+            if (self.sol.cost < self.bestSolution.cost):
+                self.bestSolution = self.cloneSolution(self.sol)
          
-            obj=self.CalculateTotalCost(self.sol)
-            if (obj <= obj2):
-                    self.sol.cost=obj
-                    obj2=obj
-                    self.bestSolution.cost=obj
-                    self.bestSolution = self.cloneSolution(self.sol)
-
-                    #self.bestSolution = self.cloneSolution(self.sol)
-               #     self.ReportSolution(self.sol)
-                  #  SolDrawer.draw("last", self.bestSolution, self.allNodes)  
-
-            localSearchIterator = localSearchIterator + 1
-      #      change_solve_iter= change_solve_iter+1
-            i=1
-            if localSearchIterator == 120:
-                terminationCondition = True
+           
         self.sol = self.bestSolution
         
         SolDrawer.draw("last", self.bestSolution, self.allNodes)  
@@ -770,24 +760,23 @@ class Solver:
         sm.moveCost = moveCost
 
     
-    def InitializeOperators(self, rm, sm):
+    def InitializeOperators(self, rm, sm,top):
         rm.Initialize()
         sm.Initialize()
-       
+        top.Initialize()
+
 
     def FindBestTwoOptMove(self, top):
         for rtInd1 in range(0, len(self.sol.routes)):
             rt1: Route = self.sol.routes[rtInd1]
             for rtInd2 in range(rtInd1, len(self.sol.routes)):
                 rt2: Route = self.sol.routes[rtInd2]
-                for nodeInd1 in range(0, len(rt1.sequenceOfNodes) - 1):
+                for nodeInd1 in range(0, len(rt1.sequenceOfNodes) - 2):
                     start2 = 0
                     if (rt1 == rt2):
                         start2 = nodeInd1 + 2
-
-                    for nodeInd2 in range(start2, len(rt2.sequenceOfNodes) - 1):
+                    for nodeInd2 in range(start2, len(rt2.sequenceOfNodes) - 2):
                         moveCost = 10 ** 9
-                        moveCost_penalized = 10 ** 9
 
                         A = rt1.sequenceOfNodes[nodeInd1]
                         B = rt1.sequenceOfNodes[nodeInd1 + 1]
@@ -799,10 +788,7 @@ class Solver:
                                 continue
                             costAdded = self.distance_matrix[A.ID][K.ID] + self.distance_matrix[B.ID][L.ID]
                             costRemoved = self.distance_matrix[A.ID][B.ID] + self.distance_matrix[K.ID][L.ID]
-                            costAdded_penalized = self.distance_matrix_penalized[A.ID][K.ID] + self.distance_matrix_penalized[B.ID][L.ID]
-                            costRemoved_penalized = self.distance_matrix_penalized[A.ID][B.ID] + self.distance_matrix_penalized[K.ID][L.ID]
                             moveCost = costAdded - costRemoved
-                            moveCost_penalized = costAdded_penalized - costRemoved_penalized
                         else:
                             if nodeInd1 == 0 and nodeInd2 == 0:
                                 continue
@@ -813,12 +799,10 @@ class Solver:
                                 continue
                             costAdded = self.distance_matrix[A.ID][L.ID] + self.distance_matrix[B.ID][K.ID]
                             costRemoved = self.distance_matrix[A.ID][B.ID] + self.distance_matrix[K.ID][L.ID]
-                            costAdded_penalized = self.distance_matrix_penalized[A.ID][L.ID] + self.distance_matrix_penalized[B.ID][K.ID]
-                            costRemoved_penalized = self.distance_matrix_penalized[A.ID][B.ID] + self.distance_matrix_penalized[K.ID][L.ID]
                             moveCost = costAdded - costRemoved
-                            moveCost_penalized = costAdded_penalized - costRemoved_penalized
-                        if moveCost_penalized < top.moveCost_penalized:
-                            self.StoreBestTwoOptMove(rtInd1, rtInd2, nodeInd1, nodeInd2, moveCost, moveCost_penalized, top)
+                        if moveCost < top.moveCost:
+                            self.StoreBestTwoOptMove(rtInd1, rtInd2, nodeInd1, nodeInd2, moveCost, top)
+
 
     def CapacityIsViolated(self, rt1, nodeInd1, rt2, nodeInd2):
 
@@ -841,15 +825,15 @@ class Solver:
 
         return False
 
-    def StoreBestTwoOptMove(self, rtInd1, rtInd2, nodeInd1, nodeInd2, moveCost, moveCost_penalized, top):
+    def StoreBestTwoOptMove(self, rtInd1, rtInd2, nodeInd1, nodeInd2, moveCost, top):
         top.positionOfFirstRoute = rtInd1
         top.positionOfSecondRoute = rtInd2
         top.positionOfFirstNode = nodeInd1
         top.positionOfSecondNode = nodeInd2
         top.moveCost = moveCost
-        top.moveCost_penalized = moveCost_penalized
 
     def ApplyTwoOptMove(self, top):
+            
         rt1: Route = self.sol.routes[top.positionOfFirstRoute]
         rt2: Route = self.sol.routes[top.positionOfSecondRoute]
 

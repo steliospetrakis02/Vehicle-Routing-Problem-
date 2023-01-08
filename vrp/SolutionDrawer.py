@@ -9,6 +9,7 @@ class SolDrawer:
     def draw(name, sol, nodes):
         plt.clf()
         SolDrawer.drawPoints(nodes)
+        print(len(nodes))
         SolDrawer.drawRoutes(sol)
         plt.savefig(str(name))
 
