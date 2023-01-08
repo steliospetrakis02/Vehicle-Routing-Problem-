@@ -302,12 +302,8 @@ class Solver:
                         terminationCondition = True
 
             obj=self.CalculateTotalCost(self.sol)
-            if (obj < obj2):
-                    obj2=obj
-                    self.sol.cost=obj
-                    self.bestSolution.cost=obj
-                    self.bestSolution = self.cloneSolution(self.sol)
-                    self.ReportSolution(self.sol)
+            if (self.sol.cost < self.bestSolution.cost): 
+                self.bestSolution = self.cloneSolution(self.sol)
             #if (self.sol.cost < self.bestSolution.cost):
                 #self.bestSolution = self.cloneSolution(self.sol)
          
