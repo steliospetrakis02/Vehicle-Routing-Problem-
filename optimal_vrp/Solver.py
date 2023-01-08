@@ -112,7 +112,7 @@ class Solver:
         random.seed(109)
         obj2=self.CalculateTotalCost(self.sol)
 
-        for i in range(80):
+        for i in range(30):
                 
                 random_route=random.randint(0,13)
                 random_route2=random.randint(0,13)
@@ -159,7 +159,7 @@ class Solver:
                 rand=random.randint(0,1)
                 for i in range(4):
                     self.VNS()
-                    #self.exhange_last_route()
+                    self.exhange_last_route()
                     
 
                 obj=self.CalculateTotalCost(self.sol)
