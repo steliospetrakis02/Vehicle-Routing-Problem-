@@ -149,7 +149,7 @@ class Solver:
 
             self.ApplyNearestNeighborMethod(sol, index)
         rt=sol.routes[0]
-       # rt.sequenceOfNodes.pop(2)
+        rt.sequenceOfNodes.pop(2)
         sol.cost = self.CalculateTotalCost(sol)
         print("Cost: ", sol.cost)
         print("Eeeeeeee")
