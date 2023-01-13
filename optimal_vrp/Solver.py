@@ -99,22 +99,31 @@ class Solver:
     
         random.seed(109)
         obj2=self.CalculateTotalCost(self.sol)
+        self.bestSolution = self.cloneSolution(self.sol)
 
-        for i in range(30):
+        for i in range(10000):
                 
                 random_route=random.randint(0,13)
+                #self.ReportSolution(self.sol)
+                #print("")
                 random_route2=random.randint(0,13)
+                if(random_route==random_route2):
+                    continue
                 rt1= self.sol.routes[random_route]
                 rt2= self.sol.routes[random_route2]
-                
-                min1=len(rt1.sequenceOfNodes)
-                min2=len(rt2.sequenceOfNodes)
-                min_=min(min1,min2)
-                random_customer_Indx=random.randint(1,(min_)-2)
-                random_customer2_Indx=random.randint(1,(min_)-2)   
-                random_customer=rt1.sequenceOfNodes[random_customer_Indx]
-                random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
-                B = random_customer
+               
+                random_customer_Indx=random.randint(1,len(rt1.sequenceOfNodes)-1)
+                random_customer2_Indx=random.randint(1,len(rt2.sequenceOfNodes)-1) 
+                if(random_customer_Indx > len(rt2.sequenceOfNodes)):
+                            continue
+                elif(random_customer2_Indx>len(rt1.sequenceOfNodes)):
+                            continue
+                else:
+                    random_customer_Indx=random.randint(1,len(rt1.sequenceOfNodes)-1)
+                    random_customer2_Indx=random.randint(1,len(rt2.sequenceOfNodes)-1)  
+                    random_customer=rt1.sequenceOfNodes[random_customer_Indx]
+                    random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
+                    B = random_customer
 
                 if rt1 != rt2:
                     while(rt2.load + B.demand > rt2.capacity):
@@ -122,21 +131,39 @@ class Solver:
                         random_route2=random.randint(0,13)
                         rt1= self.sol.routes[random_route]
                         rt2= self.sol.routes[random_route2]
-                        min1=len(rt1.sequenceOfNodes)
-                        min2=len(rt2.sequenceOfNodes)
-                        min_=min(min1,min2)
-                        random_customer_Indx=random.randint(1,(min_)-2)
-                        random_customer2_Indx=random.randint(1,(min_)-2)   
-                        random_customer=rt1.sequenceOfNodes[random_customer_Indx]
-                        random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
-                        B = random_customer
-                    else:
-                        self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)
+                        
+                        #random_customer_Indx=random.randint(1,(min_)-2)
+                        #random_customer2_Indx=random.randint(1,(min_)-2)
+                        random_customer_Indx=random.randint(1,len(rt1.sequenceOfNodes)-1)
+                        random_customer2_Indx=random.randint(1,len(rt2.sequenceOfNodes)-1)
+                        if(random_customer_Indx > len(rt2.sequenceOfNodes)):
+                            continue
+                        elif(random_customer2_Indx>len(rt1.sequenceOfNodes)):
+                                    continue
+                        else:
+                            random_customer_Indx=random.randint(1,len(rt1.sequenceOfNodes)-1)
+                            random_customer2_Indx=random.randint(1,len(rt2.sequenceOfNodes)-1)  
+                            random_customer=rt1.sequenceOfNodes[random_customer_Indx]
+                            random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
+                            B = random_customer
+                        
+                            #random_customer_Indx=random.randint(2,len(rt1.sequenceOfNodes)-1)
+                            #random_customer2_Indx=random.randint(2,len(rt2.sequenceOfNodes)-1)
+                            
+                        #random_customer=rt1.sequenceOfNodes[random_customer_Indx]
+                        #random_customer2=rt2.sequenceOfNodes[random_customer2_Indx]
+                        #B = random_customer
+                    
+                    self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)
                 else:
+                    #print("double else")
                     self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)      
     
                 for i in range(4):
-                    self.VNS()
+                    #self.ReportSolution(self.sol)
+                    self.VNS(obj2)
+                    #self.ReportSolution(self.sol)
+                    #print("e")
                     self.exhange_last_route()   
 
                 obj=self.CalculateTotalCost(self.sol)
@@ -146,27 +173,58 @@ class Solver:
                     self.bestSolution.cost=obj
                     self.bestSolution = self.cloneSolution(self.sol)
                     self.ReportSolution(self.sol)
-                    print("E")
-                    if(self.sol.cost==6118.6381963450585):
-                        rt=self.sol.routes[0]
-                        seq=rt.sequenceOfNodes.pop()
-                        seq2=rt.sequenceOfNodes.pop()
-                        rt.sequenceOfNodes.append(seq)
-                        rt.sequenceOfNodes.append(seq2)
-                        self.ReportSolution(self.sol)
-                        rt=self.sol.routes[12]
-                        rt2=self.sol.routes[10]
-                        seq=rt.sequenceOfNodes.pop()
-                        seq2=rt2.sequenceOfNodes.pop()
-                        rt.sequenceOfNodes.append(seq2)
-                        rt2.sequenceOfNodes.append(seq)
-                        self.ReportSolution(self.sol)
+                    #print("E")
+                    if(obj<6200):
+                        #print("loko")
+                        obj2=self.CalculateTotalCost(self.sol)
+                        for i in range(len(self.sol.routes)):
+                            rt=self.sol.routes[i]
+                            seq=rt.sequenceOfNodes.pop()
+                            seq2=rt.sequenceOfNodes.pop()
+                            rt.sequenceOfNodes.append(seq)
+                            rt.sequenceOfNodes.append(seq2)
+                            #self.ReportSolution(self.sol)
+                            if(self.CalculateTotalCost(self.sol)<obj2):
+                                obj2=self.CalculateTotalCost(self.sol)
+                                self.bestSolution = self.cloneSolution(self.sol)
+                                self.ReportSolution(self.sol)
+                                #print("E")
+
+                             
+                            else:
+                                seq=rt.sequenceOfNodes.pop()
+                                seq2=rt.sequenceOfNodes.pop()
+                                rt.sequenceOfNodes.append(seq)
+                                rt.sequenceOfNodes.append(seq2)
+                                
+                        #86,4,18,35,10
+                        #0,94,59,93,85,61,16,86 
+                        #38,5,5,16,10
+                        #0,95,97,92,37,98,100,91,44,38 
+
+
+                        #54
+                        #24
+                        
+                        #4
+
+                        #rt=self.sol.routes[12]
+                        #rt2=self.sol.routes[10]
+                        #seq=rt.sequenceOfNodes.pop()
+                        #seq2=rt2.sequenceOfNodes.pop()
+                        #rt.sequenceOfNodes.append(seq2)
+                        #rt2.sequenceOfNodes.append(seq)
+                        #self.ReportSolution(self.sol)
+                        #self.CalculateTotalCost2(self.sol)
+                        #
+                        #rt_origin=self.sol.routes[3]
+                        #obj2=self.CalculateTotalCost(self.sol)
+                        
+                else:
+                    self.sol = self.cloneSolution(self.bestSolution)
 
 
                       
-
-
-
         
         return self.sol
     
@@ -235,7 +293,28 @@ class Solver:
                 tot_time += self.distance_matrix[from_node.ID][to_node.ID]
                 rt_cumulative_cost += tot_time
                 tot_time += to_node.unload_time
+            
             total_cost += rt_cumulative_cost
+    
+        return total_cost
+    def CalculateTotalCost2(self, sol):
+        total_cost = 0
+        for i in range(len(sol.routes)):
+            rt = sol.routes[i]
+            tot_time = 0       
+            rt_cumulative_cost = 0
+            for j in range(len(rt.sequenceOfNodes) - 1):
+                
+                from_node = rt.sequenceOfNodes[j]            
+                to_node = rt.sequenceOfNodes[j + 1]
+                tot_time += self.distance_matrix[from_node.ID][to_node.ID]
+                rt_cumulative_cost += tot_time
+                tot_time += to_node.unload_time
+            print("costs")
+            print(rt_cumulative_cost)
+            total_cost += rt_cumulative_cost
+        print("END")
+    
         return total_cost
     
     def ApplyNearestNeighborMethod(self,sol,route_number):
@@ -283,14 +362,14 @@ class Solver:
 
         return rt1,rt2,random_customer,random_customer_Indx,random_customer2_Indx
         
-    def VNS(self):
-        obj2=self.CalculateTotalCost(self.sol)
-        self.bestSolution = self.cloneSolution(self.sol)
+    def VNS(self,obj2):
+        #obj2=self.CalculateTotalCost(self.sol)
+        #self.bestSolution = self.cloneSolution(self.sol)
         terminationCondition = False
         rm = RelocationMove()
         sm = SwapMove()
         top=TwoOptMove()
-        random.seed(109)
+        #random.seed(109)
        
         while terminationCondition is False:
             operator=random.randint(0,2)
@@ -322,21 +401,58 @@ class Solver:
                         terminationCondition = True
 
             obj=self.CalculateTotalCost(self.sol)
-            if (self.sol.cost < self.bestSolution.cost): 
+            if (obj < obj2):
+                #self.ReportSolution(self.sol)
+                #print(" ")
                 self.bestSolution = self.cloneSolution(self.sol)
             #if (self.sol.cost < self.bestSolution.cost):
                 #self.bestSolution = self.cloneSolution(self.sol)
          
            
-        self.sol = self.bestSolution
+        #self.sol = self.bestSolution
         
     def swapPositions(self,list_of_nodes1,list_of_nodes2 ,pos1, pos2):
-        first_ele = list_of_nodes1.pop(pos1)  
+        obj=self.CalculateTotalCost(self.sol)
+        
+        first_ele = list_of_nodes1.pop(pos1)
+       
+
         second_ele = list_of_nodes2.pop(pos2)
+        #print(second_ele)
+        #print(len(list_of_nodes1))
         list_of_nodes1.insert(pos1, second_ele) 
         list_of_nodes2.insert(pos2, first_ele)
+        #self.ReportSolution(self.sol)
+        obj2=self.CalculateTotalCost(self.sol)
+        #if(obj2<obj):
+        #    self.ReportSolution(self.sol)
+
+        #else:
+        #    list_of_nodes1.pop(pos1)
+        #    list_of_nodes2.pop(pos2)
+        #    list_of_nodes1.insert(pos1, first_ele)
+        #    list_of_nodes2.insert(pos2, second_ele)  
+ 
+
         
-        
+    def add_pos(self,list_of_nodes1,list_of_nodes2 ,pos1, pos2):
+        #self.ReportSolution(self.sol)
+        #print("E")
+        first_ele = list_of_nodes1.pop(pos1)  
+        #second_ele = list_of_nodes2.pop(pos2)
+        list_of_nodes2.insert(pos2, first_ele)
+        #self.ReportSolution(self.sol)
+        print("ee")
+        obj2=self.CalculateTotalCost(self.sol)
+        if(obj2<6105.881784037709):
+            self.ReportSolution(self.sol)
+            print("Eee")
+
+        else:
+            list_of_nodes1.insert(pos1, first_ele)  
+            list_of_nodes2.pop(pos2+1)
+
+            
     def cloneRoute(self, rt: Route):
         cloned = Route(self.depot, self.capacity)
         cloned.cost = rt.cost
