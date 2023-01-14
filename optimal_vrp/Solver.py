@@ -1,6 +1,6 @@
 from VRP_Model import *
 from SolutionDrawer import *
-
+from threading import Timer
 
 class Solution:
     def __init__(self):
@@ -97,11 +97,16 @@ class Solver:
        
         self.ReportSolution_Greedy(self.sol)
 
-        random.seed(109)
+        random.seed(1)
         obj2=self.CalculateTotalCost(self.sol)
         self.bestSolution = self.cloneSolution(self.sol)
         #825
+       
+        t = Timer(5, display)  
+        t.start()
         for i in range(10000):
+                
+                print(i)
                 random_route=random.randint(0,13)
                 random_route2=random.randint(0,13)
                 if(random_route==random_route2):
@@ -145,9 +150,11 @@ class Solver:
                 else:
                     self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)      
                 self.swap_two_opt(self.sol)
+                
                 for i in range(4):
                     self.VNS(obj2)
                     self.exhange_last_route()   
+               
 
                 obj=self.CalculateTotalCost(self.sol)
                 if (obj < obj2):
