@@ -1,6 +1,6 @@
 from VRP_Model import *
 from SolutionDrawer import *
-from threading import Timer
+import time
 
 class Solution:
     def __init__(self):
@@ -102,11 +102,12 @@ class Solver:
         self.bestSolution = self.cloneSolution(self.sol)
         #825
        
-        t = Timer(5, display)  
-        t.start()
-        for i in range(10000):
+       
+        st = time.time()
+        et = time.time()
+        while(et - st<171.7165417671203613):
                 
-                print(i)
+                
                 random_route=random.randint(0,13)
                 random_route2=random.randint(0,13)
                 if(random_route==random_route2):
@@ -151,7 +152,7 @@ class Solver:
                     self.swapPositions(rt1.sequenceOfNodes,rt2.sequenceOfNodes,random_customer_Indx,random_customer2_Indx)      
                 self.swap_two_opt(self.sol)
                 
-                for i in range(4):
+                for z in range(4):
                     self.VNS(obj2)
                     self.exhange_last_route()   
                
@@ -185,6 +186,8 @@ class Solver:
                                 
                 else:
                     self.sol = self.cloneSolution(self.bestSolution)
+                et = time.time()
+                
 
         self.ReportSolution(self.sol)
         SolDrawer.draw('Optimal', self.sol, self.allNodes)
